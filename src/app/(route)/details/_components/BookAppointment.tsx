@@ -25,6 +25,8 @@ const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
     string | undefined
   >();
   const { user } = useUser();
+  const [loading, setLoading] = useState(false);  // New state for loading
+
   useEffect(() => {
     getTime();
   }, []);
@@ -51,14 +53,12 @@ const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
     setTimeSlot(timeList);
   };
 
-  // UserName: user?.fullName,
-  // Email: user?.primaryEmailAddress?.emailAddress,
-  // Time: selectedTimeSlot,
-  // Date: date,
-  // Note: note,
-  // doctorId: doctor?._id,
+  const saveBooking = async () => {
+    if (!selectedTimeSlot || !user) {
+      toast("Please select a time slot and ensure you're logged in.");
+      return;
+    }
 
-  const saveBooking = () => {
     const formattedDate = date.toLocaleDateString("en-CA");
     const data = {
       UserName: user?.fullName,
@@ -68,16 +68,21 @@ const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
       Note: note,
       doctorId: doctor?.name,
     };
-    GlobalApi.bookAppointment(data)
-      .then((resp) => {
-        if (resp) {
-          toast("Booking confirmation sent to your email.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error booking appointment:", error);
-        toast("Failed to book appointment. Please try again.");
-      });
+
+    setLoading(true); // Set loading state to true when booking starts
+
+    try {
+      const resp = await GlobalApi.bookAppointment(data);
+
+      if (resp) {
+        toast("Booking confirmation sent to your email.");
+      }
+    } catch (error) {
+      console.error("Error booking appointment:", error);
+      toast("Failed to book appointment. Please try again.");
+    } finally {
+      setLoading(false); // Set loading state to false after the request is done
+    }
   };
 
   const isPastDay = (day: Date) => {
@@ -129,7 +134,7 @@ const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
                             text-center hover:bg-primary hover:text-white
                             rounded-full
                             ${
-                              item.time == selectedTimeSlot &&
+                              item.time === selectedTimeSlot &&
                               "bg-primary text-white"
                             }`}
                         >
@@ -159,10 +164,10 @@ const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
             </DialogClose>
             <Button
               type="button"
-              disabled={!(date && selectedTimeSlot)}
-              onClick={() => saveBooking()}
+              disabled={!(date && selectedTimeSlot) || loading}
+              onClick={saveBooking}
             >
-              Submit
+              {loading ? "Booking..." : "Submit"}
             </Button>
           </DialogFooter>
         </DialogContent>

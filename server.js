@@ -1,5 +1,6 @@
 // server.js
 import express from "express";
+import axios from "axios";
 import next from "next";
 import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
@@ -76,23 +77,119 @@ async function run() {
       }
     });
 
-    server.post("/api/appointments", async (req, res) => { 
+    // server.post("/api/appointments", async (req, res) => {
+    //   try {
+    //     const data = req.body;
+
+    //     // Example validation (optional)
+    //     if (
+    //       !data.UserName ||
+    //       !data.Email ||
+    //       !data.Time ||
+    //       !data.Date ||
+    //       !data.doctorId
+    //     ) {
+    //       return res.status(400).send({ error: "Missing required fields" });
+    //     }
+
+    //     const result = await bookingCollection.insertOne(data);
+    //     res.send(result);
+    //   } catch (error) {
+    //     console.error("Error creating appointment:", error);
+    //     res.status(500).send({ error: "Failed to create appointment" });
+    //   }
+    // });
+
+    //send email
+
+    const sendEmail = async (recipient, subject, text) => {
+      const apiKey = process.env.SENDINBLUE_API_KEY;
+
+      try {
+        const response = await axios.post(
+          "https://api.sendinblue.com/v3/smtp/email",
+          {
+            sender: { email: "mdmahbuba034@gmail.com" },
+            to: [{ email: recipient }],
+            subject: subject,
+            textContent: text,
+          },
+          {
+            headers: {
+              "api-key": apiKey,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        console.log("Email sent successfully:", response.data);
+      } catch (error) {
+        console.error(
+          "Error sending email:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    server.post("/api/appointments", async (req, res) => {
       try {
         const data = req.body;
-    
-        // Example validation (optional)
-        if (!data.UserName || !data.Email || !data.Time || !data.Date || !data.doctorId) {
+
+        // Example validation
+        if (
+          !data.UserName ||
+          !data.Email ||
+          !data.Time ||
+          !data.Date ||
+          !data.doctorId
+        ) {
           return res.status(400).send({ error: "Missing required fields" });
         }
-    
+
+        // Save the booking to MongoDB
         const result = await bookingCollection.insertOne(data);
+
+        // After saving, send confirmation email to patient and doctor
+        const appointmentDetails = {
+          patientName: data.UserName,
+          doctorName: data.doctorId,
+          date: data.Date,
+          time: data.Time,
+        };
+
+        // Send email to patient
+        const patientEmail = data.Email;
+        const patientSubject = `Appointment Confirmation - ${appointmentDetails.patientName}`;
+        const patientText = `
+          Dear ${appointmentDetails.patientName},
+          
+          Your appointment with Dr. ${appointmentDetails.doctorName} has been confirmed for ${appointmentDetails.date} at ${appointmentDetails.time}.
+          
+          Regards,
+          Doctor Appointment Booking
+        `;
+        await sendEmail(patientEmail, patientSubject, patientText);
+
+        // Send email to doctor
+        const doctorEmail = "mdmahbuba034@gmail.com"; 
+        const doctorSubject = `New Appointment - ${appointmentDetails.patientName}`;
+        const doctorText = `
+          Dear ${appointmentDetails.doctorName},
+          
+          You have a new appointment with ${appointmentDetails.patientName} on ${appointmentDetails.date} at ${appointmentDetails.time}.
+          
+          Regards,
+          Doctor Appointment Booking
+        `;
+        await sendEmail(doctorEmail, doctorSubject, doctorText);
         res.send(result);
       } catch (error) {
         console.error("Error creating appointment:", error);
         res.status(500).send({ error: "Failed to create appointment" });
       }
     });
-    
+
+  //--------------
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
