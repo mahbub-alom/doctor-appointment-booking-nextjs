@@ -6,13 +6,13 @@ import CancelAppointment from "./CancelAppointment";
 import GlobalApi from "@/app/_utils/GlobalApi";
 import { toast } from "sonner";
 
-const BookingList = ({ bookingList, expired ,onDeleteBooking}) => {
+const BookingList = ({ bookingList, expired, onDeleteBooking }) => {
   const handleDelete = (item) => {
     console.log(item);
     GlobalApi.deleteBooking(item?._id)
-    .then((resp) => {
+      .then((resp) => {
         if (resp.data.deletedCount > 0) {
-            onDeleteBooking(item._id);
+          onDeleteBooking(item._id);
           toast("Booking Deleted Successfully");
         } else {
           toast("Failed to delete booking");
