@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/app/_components/Header";
 import Footer from "@/app/_components/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "sonner";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
           <div className="md:px-20">
             <Header />
             {children}
+            <Toaster/>
           </div>
           <Footer />
         </body>

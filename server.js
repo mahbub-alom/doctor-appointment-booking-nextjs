@@ -10,6 +10,8 @@ const handle = app.getRequestHandler();
 const server = express();
 const PORT = process.env.PORT || 3000;
 
+server.use(express.json());
+
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.eybo8gi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -32,6 +34,9 @@ async function run() {
     const doctorCollection = client
       .db("doctor-appointment-booking")
       .collection("doctor");
+    const bookingCollection = client
+      .db("doctor-appointment-booking")
+      .collection("booking");
 
     server.get("/api/category", async (req, res) => {
       const result = await categoryCollection.find().toArray();
@@ -70,6 +75,24 @@ async function run() {
         res.status(500).json({ error: "Failed to fetch doctors" });
       }
     });
+
+    server.post("/api/appointments", async (req, res) => { 
+      try {
+        const data = req.body;
+    
+        // Example validation (optional)
+        if (!data.UserName || !data.Email || !data.Time || !data.Date || !data.doctorId) {
+          return res.status(400).send({ error: "Missing required fields" });
+        }
+    
+        const result = await bookingCollection.insertOne(data);
+        res.send(result);
+      } catch (error) {
+        console.error("Error creating appointment:", error);
+        res.status(500).send({ error: "Failed to create appointment" });
+      }
+    });
+    
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

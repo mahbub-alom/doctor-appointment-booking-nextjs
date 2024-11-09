@@ -14,16 +14,17 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarDays, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import GlobalApi from "@/app/_utils/GlobalApi";
+import { toast } from "sonner";
 
-const BookAppointment = () => {
+const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
   const [date, setDate] = useState(new Date());
   const [timeSlot, setTimeSlot] = useState<{ time: string }[]>([]);
+  const [note, setNote] = useState<string | undefined>();
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<
     string | undefined
   >();
   const { user } = useUser();
-  console.log(user);
-
   useEffect(() => {
     getTime();
   }, []);
@@ -48,6 +49,35 @@ const BookAppointment = () => {
     }
 
     setTimeSlot(timeList);
+  };
+
+  // UserName: user?.fullName,
+  // Email: user?.primaryEmailAddress?.emailAddress,
+  // Time: selectedTimeSlot,
+  // Date: date,
+  // Note: note,
+  // doctorId: doctor?._id,
+
+  const saveBooking = () => {
+    const formattedDate = date.toLocaleDateString("en-CA");
+    const data = {
+      UserName: user?.fullName,
+      Email: user?.primaryEmailAddress?.emailAddress,
+      Time: selectedTimeSlot,
+      Date: formattedDate,
+      Note: note,
+      doctorId: doctor?.name,
+    };
+    GlobalApi.bookAppointment(data)
+      .then((resp) => {
+        if (resp) {
+          toast("Booking confirmation sent to your email.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error booking appointment:", error);
+        toast("Failed to book appointment. Please try again.");
+      });
   };
 
   const isPastDay = (day: Date) => {
@@ -112,7 +142,7 @@ const BookAppointment = () => {
                 <Textarea
                   className="mt-3"
                   placeholder="Note"
-                  //  onChange={(e)=>setNote(e.target.value)}
+                  onChange={(e) => setNote(e?.target?.value)}
                 />
               </div>
             </DialogDescription>
@@ -130,7 +160,7 @@ const BookAppointment = () => {
             <Button
               type="button"
               disabled={!(date && selectedTimeSlot)}
-              // onClick={()=>saveBooking()}
+              onClick={() => saveBooking()}
             >
               Submit
             </Button>

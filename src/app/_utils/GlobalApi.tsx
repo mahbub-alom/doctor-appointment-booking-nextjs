@@ -6,13 +6,15 @@ const axiosClient = axios.create({
 
 const getCategory = () => axiosClient.get("/category");
 const getDoctorList = () => axiosClient.get("/doctor");
-const getDoctorByCategory = (category) => axiosClient.get(`/doctor/${category}`);
+const getDoctorByCategory = (category) =>
+  axiosClient.get(`/doctor/${category}`);
 const getDoctorById = (id) => axiosClient.get(`/doctors/${id}`);
-
+const bookAppointment = (data) =>axiosClient.post("/appointments", data)
 
 export default {
   getCategory,
   getDoctorList,
   getDoctorByCategory,
-  getDoctorById
+  getDoctorById,
+  bookAppointment
 };
