@@ -9,12 +9,16 @@ const getDoctorList = () => axiosClient.get("/doctor");
 const getDoctorByCategory = (category) =>
   axiosClient.get(`/doctor/${category}`);
 const getDoctorById = (id) => axiosClient.get(`/doctors/${id}`);
-const bookAppointment = (data) =>axiosClient.post("/appointments", data)
+const bookAppointment = (data) => axiosClient.post("/appointments", data);
+const getUserBookingList = (userEmail) =>axiosClient.get(`/booking/${userEmail}`);
+const deleteBooking = (id) =>axiosClient.delete(`/booking/${id}`);
 
 export default {
   getCategory,
   getDoctorList,
   getDoctorByCategory,
   getDoctorById,
-  bookAppointment
+  bookAppointment,
+  getUserBookingList,
+  deleteBooking
 };

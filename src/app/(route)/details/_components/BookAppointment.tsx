@@ -17,7 +17,12 @@ import { Textarea } from "@/components/ui/textarea";
 import GlobalApi from "@/app/_utils/GlobalApi";
 import { toast } from "sonner";
 
-const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
+const BookAppointment = ({
+  doctor,
+}: {
+  doctor: { name: string; image: string ,address:string};
+}) => {
+  // console.log(doctor?.image)
   const [date, setDate] = useState(new Date());
   const [timeSlot, setTimeSlot] = useState<{ time: string }[]>([]);
   const [note, setNote] = useState<string | undefined>();
@@ -68,6 +73,8 @@ const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
       Date: formattedDate,
       Note: note,
       doctorId: doctor?.name,
+      doctorImage: doctor?.image,
+      doctorAddress:doctor?.address
     };
 
     setLoading(true);

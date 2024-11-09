@@ -5,11 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-
-
 const Header = () => {
   const router = useRouter();
-  const {userId} = useAuth();
+  const { userId } = useAuth();
   // const {user} = useUser();
 
   const Menu = [
@@ -28,9 +26,7 @@ const Header = () => {
       name: "Contact Us",
       path: "/contactUs",
     },
-    ...(userId ? [{ id: 4, name: "My Booking", path: "/my-booking" }] : []),
   ];
-
 
   return (
     <div className="flex items-center justify-between p-4 shadow-sm">
@@ -44,6 +40,11 @@ const Header = () => {
               </li>
             </Link>
           ))}
+          {userId && (
+            <Link href={'/my-booking'} className="hover:text-primary hover:scale-105 transition-all ease-in-out cursor-pointer">
+              My Booking
+            </Link>
+          )}
         </ul>
       </div>
       <div className="flex gap-3 items-center">
