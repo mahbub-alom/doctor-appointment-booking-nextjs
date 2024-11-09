@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useUser } from "@clerk/nextjs";
+import { RedirectToSignIn, useUser } from "@clerk/nextjs";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarDays, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,8 +24,8 @@ const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<
     string | undefined
   >();
+  const [loading, setLoading] = useState(false);
   const { user } = useUser();
-  const [loading, setLoading] = useState(false);  // New state for loading
 
   useEffect(() => {
     getTime();
@@ -54,8 +54,9 @@ const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
   };
 
   const saveBooking = async () => {
-    if (!selectedTimeSlot || !user) {
-      toast("Please select a time slot and ensure you're logged in.");
+    if (!user) {
+      toast("Please ensure you're logged in.");
+      window.location.href = "/sign-in";
       return;
     }
 
@@ -69,7 +70,7 @@ const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
       doctorId: doctor?.name,
     };
 
-    setLoading(true); // Set loading state to true when booking starts
+    setLoading(true);
 
     try {
       const resp = await GlobalApi.bookAppointment(data);
@@ -88,6 +89,10 @@ const BookAppointment = ({ doctor }: { doctor: { name: string } }) => {
   const isPastDay = (day: Date) => {
     return day < new Date();
   };
+
+  if (!user) {
+    return <RedirectToSignIn redirectUrl="/sign-in" />;
+  }
 
   return (
     <div>

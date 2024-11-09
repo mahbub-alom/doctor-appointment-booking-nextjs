@@ -161,26 +161,50 @@ async function run() {
         const patientEmail = data.Email;
         const patientSubject = `Appointment Confirmation - ${appointmentDetails.patientName}`;
         const patientText = `
-          Dear ${appointmentDetails.patientName},
-          
-          Your appointment with Dr. ${appointmentDetails.doctorName} has been confirmed for ${appointmentDetails.date} at ${appointmentDetails.time}.
-          
-          Regards,
-          Doctor Appointment Booking
-        `;
+        <div style="font-family: Arial, sans-serif; color: #333;">
+          <p>Hello <strong style="color: #1E90FF;">${appointmentDetails.patientName}</strong>,</p>
+      
+          <p>We’re pleased to confirm your appointment with <strong>Dr. ${appointmentDetails.doctorName}</strong>!</p>
+      
+          <p style="background-color: #f0f8ff; padding: 10px; border-radius: 5px;">
+            <span style="color: #2E8B57; font-weight: bold;">📅 Date:</span> ${appointmentDetails.date}<br>
+            <span style="color: #2E8B57; font-weight: bold;">🕒 Time:</span> ${appointmentDetails.time}
+          </p>
+      
+          <p>Please arrive a few minutes early to ensure a smooth experience. If you have any questions or need to reschedule, feel free to reach out.</p>
+      
+          <p>Looking forward to seeing you there!</p>
+      
+          <p style="color: #555;">Best Regards,<br>
+          <strong style="color: #1E90FF;">The Doctor Appointment Booking Team</strong></p>
+        </div>
+      `;
+
         await sendEmail(patientEmail, patientSubject, patientText);
 
         // Send email to doctor
-        const doctorEmail = "mdmahbuba034@gmail.com"; 
+        const doctorEmail = "mdmahbuba034@gmail.com";
         const doctorSubject = `New Appointment - ${appointmentDetails.patientName}`;
         const doctorText = `
-          Dear ${appointmentDetails.doctorName},
-          
-          You have a new appointment with ${appointmentDetails.patientName} on ${appointmentDetails.date} at ${appointmentDetails.time}.
-          
-          Regards,
-          Doctor Appointment Booking
-        `;
+        <div style="font-family: Arial, sans-serif; color: #333;">
+          <p>Hello <strong style="color: #1E90FF;">${appointmentDetails.doctorName}</strong>,</p>
+      
+          <p>You have a new appointment scheduled with <strong style="color: #1E90FF;">${appointmentDetails.patientName}</strong>!</p>
+      
+          <p style="background-color: #f0f8ff; padding: 10px; border-radius: 5px;">
+            <span style="color: #2E8B57; font-weight: bold;">📅 Date:</span> ${appointmentDetails.date}<br>
+            <span style="color: #2E8B57; font-weight: bold;">🕒 Time:</span> ${appointmentDetails.time}
+          </p>
+      
+          <p>Please make sure to prepare accordingly for this appointment. If you have any questions or need further details, don’t hesitate to reach out.</p>
+      
+          <p>Best of luck with your appointment, and thank you for providing excellent care!</p>
+      
+          <p style="color: #555;">Best Regards,<br>
+          <strong style="color: #1E90FF;">The Doctor Appointment Booking Team</strong></p>
+        </div>
+      `;
+
         await sendEmail(doctorEmail, doctorSubject, doctorText);
         res.send(result);
       } catch (error) {
@@ -189,7 +213,7 @@ async function run() {
       }
     });
 
-  //--------------
+    //--------------
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
