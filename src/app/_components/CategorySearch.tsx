@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -8,17 +8,16 @@ import Image from "next/image";
 import Link from "next/link";
 
 const CategorySearch = () => {
-    const [categoryList, setCategoryList] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
 
-    useEffect(() => {
-      getCategoryList();
-    }, []);
-  
-    const getCategoryList = () =>
-      GlobalApi.getCategory().then((resp) => {
-        setCategoryList(resp.data);
-      });
-  
+  useEffect(() => {
+    getCategoryList();
+  }, []);
+
+  const getCategoryList = () =>
+    GlobalApi.getCategory().then((resp) => {
+      setCategoryList(resp.data);
+    });
 
   return (
     <div className="mb-10 items-center flex flex-col gap-2">
@@ -60,7 +59,10 @@ const CategorySearch = () => {
                   )
               )
             : [1, 2, 3, 4, 5, 6].map((item, index) => (
-                <div key={index} className="bg-slate-200 m-2 w-[130px] h-[120px] rounded-lg animate-pulse"></div>
+                <div
+                  key={index}
+                  className="bg-slate-200 m-2 w-[130px] h-[120px] rounded-lg animate-pulse"
+                ></div>
               ))}
         </div>
       </div>
