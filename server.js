@@ -38,6 +38,9 @@ async function run() {
     const bookingCollection = client
       .db("doctor-appointment-booking")
       .collection("booking");
+    const userCollection = client
+      .db("doctor-appointment-booking")
+      .collection("user");
 
     server.get("/api/category", async (req, res) => {
       const result = await categoryCollection.find().toArray();
@@ -227,6 +230,30 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const result = await bookingCollection.deleteOne(query);
       res.send(result);
+    });
+
+    //user data database post here
+    server.post("/api/user", async (req, res) => {
+      const users = req.body;
+      const query = { email: users?.email };
+      const existingUser = await userCollection.findOne(query);
+      if (existingUser) {
+        return res.send({ message: "user already exits", insertedId: null });
+      }
+      const result = await userCollection.insertOne(users);
+      res.send(result);
+    });
+
+    //user get api
+    server.get("/api/users/doctor/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await userCollection.findOne(query);
+      let doctor = false;
+      if (user) {
+        doctor = user?.role === "doctor";
+      }
+      res.send({ doctor });
     });
 
     // Send a ping to confirm a successful connection
