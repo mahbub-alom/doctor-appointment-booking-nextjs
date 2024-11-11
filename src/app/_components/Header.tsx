@@ -70,10 +70,10 @@ const Header = () => {
           {userId &&
             (databaseUser ? (
               <Link
-                href="/my-appointment"
+                href="/my-appointments"
                 className="hover:text-primary hover:scale-105 transition-all ease-in-out cursor-pointer"
               >
-                My Appointment
+                My Appointments
               </Link>
             ) : (
               <Link

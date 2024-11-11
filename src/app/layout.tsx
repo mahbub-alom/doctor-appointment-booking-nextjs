@@ -4,6 +4,7 @@ import Header from "@/app/_components/Header";
 import Footer from "@/app/_components/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
+import SocketProvide from "../../providers/SocketProvide";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -17,12 +18,14 @@ export default function RootLayout({ children }) {
     <ClerkProvider dynamic>
       <html lang="en">
         <body className={outfit.className}>
-          <div className="md:px-20">
-            <Header />
-            {children}
-            <Toaster />
-          </div>
-          <Footer />
+          <SocketProvide>
+            <div className="md:px-20">
+              <Header />
+              {children}
+              <Toaster />
+            </div>
+            <Footer />
+          </SocketProvide>
         </body>
       </html>
     </ClerkProvider>

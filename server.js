@@ -1,15 +1,17 @@
-// server.js
+import { createServer } from "node:http";
+import { Server } from "socket.io";
+const hostname = "localhost";
 import express from "express";
 import axios from "axios";
 import next from "next";
 import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
+const PORT = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== "production";
-const app = next({ dev });
+const app = next({ dev, hostname, PORT });
 const handle = app.getRequestHandler();
 const server = express();
-const PORT = process.env.PORT || 3000;
 
 server.use(express.json());
 
@@ -269,19 +271,66 @@ async function run() {
 run().catch(console.dir);
 
 app.prepare().then(() => {
-  // Example custom API route
+  // Start the Express server and attach Socket.io to it
+  const httpServer = server.listen(PORT, () => {
+    console.log(`> Ready on http://${hostname}:${PORT}`);
+  });
+
+  const io = new Server(httpServer, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"],
+    },
+  });
+
+  let onlineUsers = [];
+
+  io.on("connection", (socket) => {
+    //add user
+    socket.on("addNewUser", (clerkUser) => {
+      clerkUser &&
+        !onlineUsers.some((user) => user?.userId === clerkUser.id) &&
+        onlineUsers.push({
+          userId: clerkUser.id,
+          socketId: socket.id,
+          profile: clerkUser,
+        });
+      //send active users
+      io.emit("getUsers", onlineUsers);
+    });
+    socket.on("disconnect", () => {
+      onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
+
+      // send active user
+      io.emit("getUsers", onlineUsers);
+    });
+    // console.log("client connected", socket.id);
+    // socket.on("disconnect", () => {
+    //   console.log("Socket.io client disconnected", socket.id);
+    // });
+  });
+
+  // Next.js custom API route
   server.get("/api/", (req, res) => {
     res.json({ message: "Hello from Express!" });
   });
 
   // Handle all other routes with Next.js
-  server.all("*", (req, res) => {
-    return handle(req, res);
-  });
+  server.all("*", (req, res) => handle(req, res));
 
-  // Start the server
-  server.listen(PORT, (err) => {
-    if (err) throw err;
-    console.log(`> Ready on http://localhost:${PORT}`);
-  });
+  // // Example custom API route
+  // server.get("/api/", (req, res) => {
+  //   res.json({ message: "Hello from Express!" });
+  // });
+
+  // // Handle all other routes with Next.js
+  // server.all("*", (req, res) => {
+  //   return handle(req, res);
+  // });
+
+  // // Start the server
+  // server.listen(PORT, (err) => {
+  //   if (err) throw err;
+  //   console.log(`> Ready on http://localhost:${PORT}`);
+  // });
 });
