@@ -7,6 +7,7 @@ import next from "next";
 import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
+import onCall from "./socket-events/onCall.js";
 const PORT = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev, hostname, PORT });
@@ -270,13 +271,16 @@ async function run() {
 }
 run().catch(console.dir);
 
+export let io;
+
+
 app.prepare().then(() => {
   // Start the Express server and attach Socket.io to it
   const httpServer = server.listen(PORT, () => {
     console.log(`> Ready on http://${hostname}:${PORT}`);
   });
 
-  const io = new Server(httpServer, {
+  io = new Server(httpServer, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
@@ -304,10 +308,10 @@ app.prepare().then(() => {
       // send active user
       io.emit("getUsers", onlineUsers);
     });
-    // console.log("client connected", socket.id);
-    // socket.on("disconnect", () => {
-    //   console.log("Socket.io client disconnected", socket.id);
-    // });
+
+    //call events
+    socket.on('call',onCall)
+
   });
 
   // Next.js custom API route
