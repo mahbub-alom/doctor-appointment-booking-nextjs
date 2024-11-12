@@ -5,8 +5,7 @@ import Avatar from "./Avatar";
 import { MdCall, MdCallEnd } from "react-icons/md";
 
 const CallNotification = () => {
-  const { ongoingCall } = useSocket();
-  console.log(ongoingCall);
+  const { ongoingCall,handleJoinCall ,handleHangup} = useSocket();
   if (!ongoingCall?.isRinging) return;
   return (
     <div className="relative">
@@ -21,18 +20,18 @@ const CallNotification = () => {
           <p className="text-sm mb-2">Incoming Call</p>
           <div className="flex gap-8">
             <button
-              // onClick={() => handleJoinCall(ongoingCall)}
+              onClick={() => handleJoinCall(ongoingCall)}
               className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white "
             >
               <MdCall size={24} />
             </button>
             <button
-              // onClick={() =>
-              //   handleHangup({
-              //     ongoingCall: ongoingCall ? ongoingCall : undefined,
-              //     isEmitHangup: true,
-              //   })
-              // }
+              onClick={() =>
+                handleHangup({
+                  ongoingCall: ongoingCall ? ongoingCall : undefined,
+                  isEmitHangup: true,
+                })
+              }
               className="w-10 h-10 bg-rose-500 rounded-full flex items-center justify-center text-white "
             >
               <MdCallEnd size={24} />

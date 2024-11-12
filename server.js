@@ -8,6 +8,8 @@ import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
 import onCall from "./socket-events/onCall.js";
+import onWebrtcSignal from "./socket-events/onWebrtcSignal.js";
+import onHangup from "./socket-events/onHangup.js";
 const PORT = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev, hostname, PORT });
@@ -170,7 +172,7 @@ async function run() {
         <div style="font-family: Arial, sans-serif; color: #333;">
           <p>Hello <strong style="color: #1E90FF;">${appointmentDetails.patientName}</strong>,</p>
       
-          <p>We’re pleased to confirm your appointment with <strong>Dr. ${appointmentDetails.doctorName}</strong>!</p>
+          <p>We’re pleased to confirm your appointment with <strong>${appointmentDetails.doctorName}</strong>!</p>
       
           <p style="background-color: #f0f8ff; padding: 10px; border-radius: 5px;">
             <span style="color: #2E8B57; font-weight: bold;">📅 Date:</span> ${appointmentDetails.date}<br>
@@ -273,7 +275,6 @@ run().catch(console.dir);
 
 export let io;
 
-
 app.prepare().then(() => {
   // Start the Express server and attach Socket.io to it
   const httpServer = server.listen(PORT, () => {
@@ -310,8 +311,9 @@ app.prepare().then(() => {
     });
 
     //call events
-    socket.on('call',onCall)
-
+    socket.on("call", onCall);
+    socket.on("webrtcSignal", onWebrtcSignal);
+    socket.on("hangup", onHangup);
   });
 
   // Next.js custom API route
