@@ -1,18 +1,17 @@
-// "use client";
 import GlobalApi from "@/app/_utils/GlobalApi";
 import React from "react";
 import DoctorDetails from "../_components/DoctorDetails";
 import DoctorSuggestionList from "../_components/DoctorSuggestionList";
 
-// Define proper types for the params
-type DetailsProps = {
+// Correct type definition for Next.js page props
+type Props = {
   params: {
     recordId: string;
   };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
-const Details = async ({ params }: DetailsProps) => {
+const Details = async ({ params }: Props) => {
   const recordId = params?.recordId;
 
   const doctor = await GlobalApi.getDoctorById(recordId)
