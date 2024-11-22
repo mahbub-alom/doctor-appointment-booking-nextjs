@@ -4,17 +4,36 @@ const axiosClient = axios.create({
   baseURL: "http://localhost:3000/api",
 });
 
+interface AppointmentData {
+  UserName: string | null;
+  Email: string | undefined;
+  Time: string | undefined;
+  Date: string;
+  Note: string | undefined;
+  doctorId: string;
+  doctorImage: string;
+  doctorAddress: string;
+}
+
+interface UserInfo {
+  name: string ;
+  email: string;
+}
+
 const getCategory = () => axiosClient.get("/category");
 const getDoctorList = () => axiosClient.get("/doctor");
-const getDoctorByCategory = (category) =>
+const getDoctorByCategory = (category: string) =>
   axiosClient.get(`/doctor/${category}`);
-const getDoctorById = (id) => axiosClient.get(`/doctors/${id}`);
-const bookAppointment = (data) => axiosClient.post("/appointments", data);
-const getUserBookingList = (userEmail) =>
+const getDoctorById = (id: string | number) =>
+  axiosClient.get(`/doctors/${id}`);
+const bookAppointment = (data: AppointmentData) =>
+  axiosClient.post("/appointments", data);
+const getUserBookingList = (userEmail: string) =>
   axiosClient.get(`/booking/${userEmail}`);
-const deleteBooking = (id) => axiosClient.delete(`/booking/${id}`);
-const userStore = (data) => axiosClient.post("/user", data);
-const getUserStore = (userEmail) =>
+const deleteBooking = (id: string | number) =>
+  axiosClient.delete(`/booking/${id}`);
+const userStore = (userinfo: UserInfo) => axiosClient.post("/user", userinfo);
+const getUserStore = (userEmail: string) =>
   axiosClient.get(`/users/doctor/${userEmail}`);
 
 export default {

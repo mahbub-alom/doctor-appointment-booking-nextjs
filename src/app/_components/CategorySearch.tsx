@@ -7,8 +7,14 @@ import GlobalApi from "@/app/_utils/GlobalApi";
 import Image from "next/image";
 import Link from "next/link";
 
+// Define the interface for category item
+interface Category {
+  name: string;
+  icon: string;
+}
+
 const CategorySearch = () => {
-  const [categoryList, setCategoryList] = useState([]);
+  const [categoryList, setCategoryList] = useState<Category[]>([]);
 
   useEffect(() => {
     getCategoryList();
@@ -42,18 +48,18 @@ const CategorySearch = () => {
                 (item, index) =>
                   index < 10 && (
                     <Link
-                      href={"/search/" + item?.name}
+                      href={"/search/" + item.name}
                       key={index}
                       className="flex flex-col text-center gap-2 items-center p-5 bg-blue-50 m-2 rounded-lg hover:scale-110 transition-all ease-in-out cursor-pointer"
                     >
                       <Image
-                        src={item?.icon}
+                        src={item.icon}
                         width={40}
                         height={40}
                         alt="icon"
                       />
                       <label className="text-blue-600 text-sm">
-                        {item?.name}
+                        {item.name}
                       </label>
                     </Link>
                   )

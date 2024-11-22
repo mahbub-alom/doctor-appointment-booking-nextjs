@@ -6,10 +6,31 @@ import CancelAppointment from "./CancelAppointment";
 import GlobalApi from "@/app/_utils/GlobalApi";
 import { toast } from "sonner";
 
-const BookingList = ({ bookingList, expired, onDeleteBooking }) => {
-  const handleDelete = (item) => {
+// Define interface for booking item
+interface BookingItem {
+  _id: string;
+  doctorImage: string;
+  doctorId: string;
+  doctorAddress: string;
+  Date: string;
+  Time: string;
+}
+
+// Define interface for component props
+interface BookingListProps {
+  bookingList: BookingItem[];
+  expired: boolean;
+  onDeleteBooking: (id: string) => void;
+}
+
+const BookingList: React.FC<BookingListProps> = ({ 
+  bookingList, 
+  expired, 
+  onDeleteBooking 
+}) => {
+  const handleDelete = (item: BookingItem) => {
     console.log(item);
-    GlobalApi.deleteBooking(item?._id)
+    GlobalApi.deleteBooking(item._id)
       .then((resp) => {
         if (resp.data.deletedCount > 0) {
           onDeleteBooking(item._id);
@@ -23,6 +44,7 @@ const BookingList = ({ bookingList, expired, onDeleteBooking }) => {
         toast("Error deleting booking");
       });
   };
+
   return (
     <div>
       {bookingList.length > 0 ? (
@@ -32,7 +54,7 @@ const BookingList = ({ bookingList, expired, onDeleteBooking }) => {
             className="flex gap-4 items-center border p-5 m-3 rounded-lg"
           >
             <Image
-              src={item?.doctorImage}
+              src={item.doctorImage}
               width={70}
               height={70}
               className="rounded-full h-[70px] w-[70px] object-cover"
@@ -40,7 +62,7 @@ const BookingList = ({ bookingList, expired, onDeleteBooking }) => {
             />
             <div className="flex flex-col gap-2 w-full">
               <h2 className="font-bold text-[18px] items-center flex justify-between">
-                {item?.doctorId}
+                {item.doctorId}
                 {!expired && (
                   <CancelAppointment
                     onContinueClick={() => handleDelete(item)}
@@ -49,15 +71,15 @@ const BookingList = ({ bookingList, expired, onDeleteBooking }) => {
               </h2>
               <h2 className="flex gap-2 text-gray-500">
                 <MapPin className="text-primary h-5 w-5" />
-                {item?.doctorAddress}
+                {item.doctorAddress}
               </h2>
               <h2 className="flex gap-2">
                 <Calendar className="text-primary h-5 w-5" /> Appointment On:
-                {moment(item?.Date).format("DD-MMM-YYYY")}{" "}
+                {moment(item.Date).format("DD-MMM-YYYY")}{" "}
               </h2>
               <h2 className="flex gap-2">
                 <Clock className="text-primary h-5 w-5" /> At Time :{" "}
-                {item?.Time}{" "}
+                {item.Time}{" "}
               </h2>
             </div>
           </div>

@@ -13,8 +13,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
+// Define an interface for the category item
+interface CategoryItem {
+  name: string;
+  icon: string;
+}
+
 const CategoryList = () => {
-  const [categoryList, setCategoryList] = useState([]);
+  // Specify the type for categoryList
+  const [categoryList, setCategoryList] = useState<CategoryItem[]>([]);
   const params = usePathname();
   const category = params.split("/")[2];
 
@@ -35,16 +42,16 @@ const CategoryList = () => {
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
             {categoryList &&
-              categoryList?.map((item, index) => (
+              categoryList.map((item, index) => (
                 <CommandItem key={index}>
                   <Link
-                    href={"/search/" + item?.name}
+                    href={"/search/" + item.name}
                     className={`p-2 flex items-center gap-2 text-[14px] text-blue-600 rounded-md cursor-pointer w-full
-                        ${category == item?.name && "bg-blue-100"}
+                        ${category == item.name && "bg-blue-100"}
                         `}
                   >
-                    <Image src={item?.icon} alt="icon" width={25} height={25} />
-                    <label>{item?.name}</label>
+                    <Image src={item.icon} alt="icon" width={25} height={25} />
+                    <label>{item.name}</label>
                   </Link>
                 </CommandItem>
               ))}

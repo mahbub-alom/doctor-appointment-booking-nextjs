@@ -5,32 +5,44 @@ import BookingList from "./_components/BookingList";
 import GlobalApi from "@/app/_utils/GlobalApi";
 import { useUser } from "@clerk/nextjs";
 
+interface BookingItem {
+  _id: string;
+  Date: string;
+  doctorImage: string;
+  doctorId: string;
+  doctorAddress: string;
+  Time: string;
+}
+
 const MyBooking = () => {
   const { user } = useUser();
-  const [bookingList, setBookingList] = useState([]);
+  const [bookingList, setBookingList] = useState<BookingItem[]>([]);
 
   useEffect(() => {
-    getUserBookingList();
-  }, []);
+    if (user?.primaryEmailAddress?.emailAddress) {
+      getUserBookingList();
+    }
+  }, [user]);
 
   const getUserBookingList = () => {
-    GlobalApi.getUserBookingList(user?.primaryEmailAddress?.emailAddress).then(
-      (resp) => {
-        setBookingList(resp?.data);
-      }
-    );
+    const email = user?.primaryEmailAddress?.emailAddress;
+    if (!email) return;
+
+    GlobalApi.getUserBookingList(email).then((resp) => {
+      setBookingList(resp?.data);
+    });
   };
 
-  const filterUserBookingList = (type) => {
+  const filterUserBookingList = (type: "upcoming" | "expired"): BookingItem[] => {
     const result = bookingList.filter((item) =>
-      type == "upcoming"
+      type === "upcoming"
         ? new Date(item.Date) >= new Date()
         : new Date(item.Date) <= new Date()
     );
     return result;
   };
 
-  const handleDeleteBooking = (deletedId) => {
+  const handleDeleteBooking = (deletedId: string) => {
     setBookingList((prevList) =>
       prevList.filter((item) => item._id !== deletedId)
     );

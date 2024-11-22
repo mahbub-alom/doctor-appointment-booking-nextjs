@@ -3,10 +3,15 @@
 import { useUser } from "@clerk/nextjs";
 
 const UserProfile = () => {
-  const { isSignedIn, isLoading, user } = useUser();
+  const { isSignedIn, isLoaded, user } = useUser();
 
-  if (isLoading) return <p>Loading user data...</p>;
+  if (!isLoaded) return <p>Loading user data...</p>;
   if (!isSignedIn) return <p>Please log in to see your profile.</p>;
+
+  // Helper function to safely format dates
+  const formatDate = (date: Date | null | undefined) => {
+    return date ? new Date(date).toLocaleDateString() : "Not available";
+  };
 
   return (
     <div className="user-profile">
@@ -19,21 +24,21 @@ const UserProfile = () => {
         <p><strong>Email:</strong> {user?.emailAddresses[0]?.emailAddress}</p>
         <p><strong>Username:</strong> {user?.username}</p>
         <p><strong>Phone Number:</strong> {user?.phoneNumbers[0]?.phoneNumber}</p>
-        <p><strong>Profile Picture:</strong> <img src={user?.profileImageUrl} alt="Profile" /></p>
+        <p><strong>Profile Picture:</strong> <img src={user?.imageUrl} alt="Profile" /></p>
       </section>
 
       {/* Account Settings Section */}
       <section>
         <h2>Account Settings</h2>
-        <p><strong>Created At:</strong> {new Date(user?.createdAt).toLocaleDateString()}</p>
-        <p><strong>Last Active At:</strong> {new Date(user?.lastSignInAt).toLocaleDateString()}</p>
+        <p><strong>Created At:</strong> {formatDate(user?.createdAt)}</p>
+        <p><strong>Last Active At:</strong> {formatDate(user?.lastSignInAt)}</p>
       </section>
 
       {/* Security Settings Section */}
       <section>
         <h2>Security Settings</h2>
         <p><strong>Two-Factor Authentication:</strong> {user?.twoFactorEnabled ? "Enabled" : "Disabled"}</p>
-        <p><strong>Primary Email Verified:</strong> {user?.emailAddresses[0]?.verified ? "Yes" : "No"}</p>
+        <p><strong>Primary Email Verified:</strong> {user?.emailAddresses[0]?.verification?.status === "verified" ? "Yes" : "No"}</p>
       </section>
 
       {/* Debugging: Show All User Data */}

@@ -18,31 +18,35 @@ const Header = () => {
     const fetchDatabaseUser = async () => {
       if (isSignedIn && userLoaded && user?.primaryEmailAddress?.emailAddress) {
         setLoading(true);
-
+  
         try {
+          const email = user.primaryEmailAddress.emailAddress;
+          
+          // Create a UserInfo object with all required properties
           const userInfo = {
-            name: user.fullName,
-            email: user.primaryEmailAddress.emailAddress,
+            email: email,
+            name: user.fullName || user.firstName || '', // Add name from user object
+            // Add any other required fields from the UserInfo type
           };
-
-          // Store or check user in database
+          
           await GlobalApi.userStore(userInfo);
-          const response = await GlobalApi.getUserStore(userInfo.email);
-
-          // Set `databaseUser` based on API response
+          const response = await GlobalApi.getUserStore(email);
+  
           setDatabaseUser(response?.data?.doctor);
         } catch (error) {
           console.error("Error fetching or storing database user:", error);
         } finally {
-          setLoading(false); // Stop loading regardless of success or failure
+          setLoading(false);
         }
       } else {
-        setLoading(false); // Stop loading if no signed-in user or no email
+        setLoading(false);
       }
     };
-
+  
     fetchDatabaseUser();
   }, [isSignedIn, userLoaded, user]);
+  
+  
 
   if (loading) {
     return <div>Loading.....</div>;

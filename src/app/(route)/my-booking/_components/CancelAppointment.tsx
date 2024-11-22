@@ -12,7 +12,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 
-const CancelAppointment = ({ onContinueClick }) => {
+interface CancelAppointmentProps {
+  onContinueClick: () => void;
+}
+
+const CancelAppointment: React.FC<CancelAppointmentProps> = ({ onContinueClick }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
