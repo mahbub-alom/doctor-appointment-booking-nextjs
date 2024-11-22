@@ -1,12 +1,27 @@
-import { Button } from "@/components/ui/button";
 import { GraduationCap, MapPin } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import BookAppointment from "./BookAppointment";
-// import BookAppointment from "./BookAppointment";
 
-const DoctorDetails = ({ doctor }:{doctor:any}) => {
-  const socialMediaList = [
+// Define the Doctor interface
+interface Doctor {
+  image?: string;
+  name: string;
+  year_of_experience: number;
+  address: string;
+  categories?: string[];
+  about: string;
+}
+
+// Define the SocialMedia interface
+interface SocialMedia {
+  id: number;
+  icon: string;
+  url?: string;
+}
+
+const DoctorDetails = ({ doctor }: { doctor: Doctor }) => {
+  const socialMediaList: SocialMedia[] = [
     {
       id: 1,
       icon: "/youtube.png",
@@ -35,7 +50,7 @@ const DoctorDetails = ({ doctor }:{doctor:any}) => {
         <div>
           {doctor?.image ? (
             <Image
-              src={doctor?.image}
+              src={doctor.image}
               alt="doctor image"
               width={200}
               height={200}
@@ -47,17 +62,17 @@ const DoctorDetails = ({ doctor }:{doctor:any}) => {
         </div>
         {/* doctor info */}
         <div className="col-span-2 mt-5 flex flex-col gap-3 items-baseline">
-          <h2 className="font-bold text-2xl">{doctor?.name}</h2>
+          <h2 className="font-bold text-2xl">{doctor.name}</h2>
           <h2 className="flex gap-2 text-gray-500 text-md">
             <GraduationCap />
-            <span>{doctor?.year_of_experience} Years of Experience</span>
+            <span>{doctor.year_of_experience} Years of Experience</span>
           </h2>
           <h2 className="text-md flex gap-3 text-gray-500">
             <MapPin />
-            <span>{doctor?.address}</span>
+            <span>{doctor.address}</span>
           </h2>
           <h2>
-            {doctor?.categories?.map((category, index) => (
+            {doctor.categories?.map((category, index) => (
               <span
                 key={index}
                 className="text-[10px] bg-blue-100 p-1 rounded-full px-2 text-primary inline-block mr-2"
@@ -78,8 +93,13 @@ const DoctorDetails = ({ doctor }:{doctor:any}) => {
               />
             ))}
           </div>
-          {/* <Button className="mt-3 rounded-full">Book Appointment</Button> */}
-          <BookAppointment doctor={doctor}/>
+          <BookAppointment
+            doctor={{
+              name: doctor.name,
+              image: doctor.image || "",
+              address: doctor.address,
+            }}
+          />
         </div>
       </div>
       {/* About Doctor */}
