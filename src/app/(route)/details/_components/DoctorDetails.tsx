@@ -5,7 +5,7 @@ import React from "react";
 import BookAppointment from "./BookAppointment";
 // import BookAppointment from "./BookAppointment";
 
-const DoctorDetails = ({ doctor }) => {
+const DoctorDetails = ({ doctor }:{doctor:any}) => {
   const socialMediaList = [
     {
       id: 1,

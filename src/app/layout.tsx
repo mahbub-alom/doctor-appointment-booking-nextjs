@@ -5,6 +5,7 @@ import Footer from "@/app/_components/Footer";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import SocketProvide from "../../providers/SocketProvide";
+import Script from "next/script";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -17,6 +18,21 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider dynamic>
       <html lang="en">
+        <head>
+          <Script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-F2MFYWWS6E"
+          ></Script>
+          <Script>
+            {`
+    window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-F2MFYWWS6E');
+  `}
+          </Script>
+        </head>
         <body className={outfit.className}>
           <SocketProvide>
             <div className="md:px-20">

@@ -1,27 +1,35 @@
-"use client";
+// "use client";
 import GlobalApi from "@/app/_utils/GlobalApi";
-import React, { use, useEffect, useState } from "react";
+import React from "react";
 import DoctorDetails from "../_components/DoctorDetails";
 import DoctorSuggestionList from "../_components/DoctorSuggestionList";
 
-const Details = ({ params }) => {
-  const { recordId } = use(params);
-  const [doctor, setDoctor] = useState([]);
-  useEffect(() => {
-    if (recordId) {
-      getDoctorById();
-    }
-  }, [recordId]);
+const Details = async ({ params }: { params: { recordId: string } }) => {
+  const recordId = params?.recordId;
 
-  const getDoctorById = () => {
-    GlobalApi.getDoctorById(recordId)
-      .then((resp) => {
-        setDoctor(resp.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching doctor data:", error);
-      });
-  };
+  const doctor = await GlobalApi.getDoctorById(recordId)
+    .then((resp) => resp.data)
+    .catch((error) => {
+      console.log("error fetching doctor data", error);
+      return null;
+    });
+  // const { recordId } = use(params);
+  // const [doctor, setDoctor] = useState([]);
+  // useEffect(() => {
+  //   if (recordId) {
+  //     getDoctorById();
+  //   }
+  // }, [recordId]);
+
+  // const getDoctorById = () => {
+  //   GlobalApi.getDoctorById(recordId)
+  //     .then((resp) => {
+  //       setDoctor(resp.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching doctor data:", error);
+  //     });
+  // };
 
   return (
     <div className="p-5 md:px-20">
