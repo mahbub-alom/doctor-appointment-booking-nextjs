@@ -3,15 +3,15 @@ import React from "react";
 import DoctorDetails from "../_components/DoctorDetails";
 import DoctorSuggestionList from "../_components/DoctorSuggestionList";
 
-// Correct type definition for Next.js page props
+
 type Props = {
   params: {
     recordId: string;
   };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
 
-const Details = async ({ params }: Props) => {
+const Details = async ({ params, searchParams }: Props) => {
   const recordId = params?.recordId;
 
   const doctor = await GlobalApi.getDoctorById(recordId)
