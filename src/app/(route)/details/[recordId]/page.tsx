@@ -11,6 +11,7 @@ type Props = {
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Details = async ({ params, searchParams }: Props) => {
   const recordId = params?.recordId;
 
