@@ -1,7 +1,10 @@
 import axios from "axios";
 
+// const axiosClient = axios.create({
+//   baseURL: "http://localhost:3000/api",
+// });
 const axiosClient = axios.create({
-  baseURL: "https://doctor-appointment-booking-nextjs-1.onrender.com/api",
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
 });
 
 interface AppointmentData {
@@ -16,7 +19,7 @@ interface AppointmentData {
 }
 
 interface UserInfo {
-  name: string ;
+  name: string;
   email: string;
 }
 

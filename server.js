@@ -288,19 +288,18 @@ app.prepare().then(() => {
     },
   });
 
-  let onlineUsers = [];
-
+  
   io.on("connection", (socket) => {
+    let onlineUsers = [];
     //add user
     socket.on("addNewUser", (clerkUser) => {
-      clerkUser &&
-        !onlineUsers.some((user) => user?.userId === clerkUser.id) &&
+      if (clerkUser && !onlineUsers.some((user) => user?.userId === clerkUser.id)) {
         onlineUsers.push({
           userId: clerkUser.id,
           socketId: socket.id,
           profile: clerkUser,
         });
-      //send active users
+      }
       io.emit("getUsers", onlineUsers);
     });
     socket.on("disconnect", () => {
