@@ -1,6 +1,5 @@
 import { createServer } from "node:http";
 import { Server } from "socket.io";
-const hostname = "localhost";
 import express from "express";
 import axios from "axios";
 import next from "next";
@@ -12,7 +11,7 @@ import onWebrtcSignal from "./socket-events/onWebrtcSignal.js";
 import onHangup from "./socket-events/onHangup.js";
 const PORT = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== "production";
-const app = next({ dev, hostname, PORT });
+const app = next({ dev, PORT });
 const handle = app.getRequestHandler();
 const server = express();
 
@@ -288,12 +287,14 @@ app.prepare().then(() => {
     },
   });
 
-  
   io.on("connection", (socket) => {
     let onlineUsers = [];
     //add user
     socket.on("addNewUser", (clerkUser) => {
-      if (clerkUser && !onlineUsers.some((user) => user?.userId === clerkUser.id)) {
+      if (
+        clerkUser &&
+        !onlineUsers.some((user) => user?.userId === clerkUser.id)
+      ) {
         onlineUsers.push({
           userId: clerkUser.id,
           socketId: socket.id,

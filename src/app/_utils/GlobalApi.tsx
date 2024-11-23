@@ -7,6 +7,7 @@ const axiosClient = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
 });
 
+
 interface AppointmentData {
   UserName: string | null;
   Email: string | undefined;
