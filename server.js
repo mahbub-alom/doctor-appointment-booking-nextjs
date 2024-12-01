@@ -1,3 +1,5 @@
+//new added
+import cors from 'cors';
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 const hostname = "localhost";
@@ -17,6 +19,12 @@ const handle = app.getRequestHandler();
 const server = express();
 
 server.use(express.json());
+
+//new added
+server.use(cors({
+  origin: ['http://localhost:3000', 'https://doctor-appointment-booking-web-app.netlify.app'],
+  credentials: true
+}));
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.eybo8gi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
