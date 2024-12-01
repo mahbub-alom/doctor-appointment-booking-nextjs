@@ -3,12 +3,32 @@ import axios from "axios";
 // const axiosClient = axios.create({
 //   baseURL: "https://doctor-appointment-booking-web-app.netlify.app/api",
 // });
-const axiosClient = axios.create({
-  baseURL: "http://localhost:3000/api",
-});
+// const axiosClient = axios.create({
+//   baseURL: "http://localhost:3000/api",
+// });
 // const axiosClient = axios.create({
 //   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
 // });
+
+const axiosClient = axios.create({
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true
+});
+
+// Add request interceptor to handle errors
+axiosClient.interceptors.request.use(
+  (config) => {
+    // Add any additional headers if needed
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 
 
 interface AppointmentData {

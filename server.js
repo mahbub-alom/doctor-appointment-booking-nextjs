@@ -1,7 +1,8 @@
-
+import cors from 'cors';
 import { createServer } from "node:http";
 import { Server } from "socket.io";
-const hostname = "localhost";
+const hostname = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost";
+
 import express from "express";
 import axios from "axios";
 import next from "next";
@@ -16,6 +17,26 @@ const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev, hostname,PORT });
 const handle = app.getRequestHandler();
 const server = express();
+
+server.use(cors({
+  origin: [
+    'https://doctor-appointment-booking-nextjs.onrender.com',
+    'http://localhost:3000'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+}));
+
+
+// Add headers middleware
+server.use((req, res, next) => {
+  // The origin should match your frontend domain
+  res.header('Access-Control-Allow-Origin', 'https://doctor-appointment-booking-nextjs.onrender.com');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Referrer-Policy', 'no-referrer-when-downgrade');
+  next();
+});
 
 server.use(express.json());
 
@@ -284,10 +305,16 @@ app.prepare().then(() => {
 
   io = new Server(httpServer, {
     cors: {
-      origin: "*",
+      origin: [
+        'https://doctor-appointment-booking-nextjs.onrender.com',
+        'http://localhost:3000'
+      ],
       methods: ["GET", "POST"],
+      credentials: true,
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
     },
   });
+  
 
   let onlineUsers = [];
   io.on("connection", (socket) => {
