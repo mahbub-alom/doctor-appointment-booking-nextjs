@@ -12,7 +12,7 @@ import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
 import onCall from "./socket-events/onCall.js";
 import onWebrtcSignal from "./socket-events/onWebrtcSignal.js";
 import onHangup from "./socket-events/onHangup.js";
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev, hostname,PORT });
 const handle = app.getRequestHandler();
