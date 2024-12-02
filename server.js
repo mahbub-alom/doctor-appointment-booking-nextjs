@@ -1,40 +1,50 @@
-import cors from 'cors';
-import { createServer } from "node:http";
+import cors from "cors";
 import { Server } from "socket.io";
-const hostname = process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost";
+const hostname =
+  process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost";
 
-import express from "express";
 import axios from "axios";
-import next from "next";
 import dotenv from "dotenv";
-dotenv.config({ path: ".env.local" });
+import express from "express";
 import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
+import next from "next";
 import onCall from "./socket-events/onCall.js";
-import onWebrtcSignal from "./socket-events/onWebrtcSignal.js";
 import onHangup from "./socket-events/onHangup.js";
+import onWebrtcSignal from "./socket-events/onWebrtcSignal.js";
+dotenv.config({ path: ".env.local" });
 const PORT = process.env.PORT || 3000;
 const dev = process.env.NODE_ENV !== "production";
-const app = next({ dev, hostname,PORT });
+const app = next({ dev, hostname, PORT });
 const handle = app.getRequestHandler();
 const server = express();
 
-server.use(cors({
-  origin: [
-    'https://doctor-appointment-booking-nextjs.onrender.com',
-    'http://localhost:3000'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
-}));
-
+server.use(
+  cors({
+    origin: [
+      "https://doctor-appointment-booking-web-app.netlify.app",
+      "http://localhost:3000",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "Accept",
+      "Origin",
+    ],
+  })
+);
 
 // Add headers middleware
 server.use((req, res, next) => {
   // The origin should match your frontend domain
-  res.header('Access-Control-Allow-Origin', 'https://doctor-appointment-booking-nextjs.onrender.com');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Referrer-Policy', 'no-referrer-when-downgrade');
+  res.header(
+    "Access-Control-Allow-Origin",
+    "https://doctor-appointment-booking-web-app.netlify.app"
+  );
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Referrer-Policy", "no-referrer-when-downgrade");
   next();
 });
 
@@ -306,15 +316,20 @@ app.prepare().then(() => {
   io = new Server(httpServer, {
     cors: {
       origin: [
-        'https://doctor-appointment-booking-nextjs.onrender.com',
-        'http://localhost:3000'
+        "https://doctor-appointment-booking-web-app.netlify.app",
+        "http://localhost:3000",
       ],
       methods: ["GET", "POST"],
       credentials: true,
-      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "X-Requested-With",
+        "Accept",
+        "Origin",
+      ],
     },
   });
-  
 
   let onlineUsers = [];
   io.on("connection", (socket) => {
