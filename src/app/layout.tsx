@@ -42,8 +42,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <SocketProvide>
             <div className="md:px-20">
               <Header />
-              {/* {children} */}
-              <div>hello</div>
+              {children}
               <Toaster />
             </div>
             <Footer />
